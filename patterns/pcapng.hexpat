@@ -7,7 +7,7 @@
 #include <type/ip.pat>
 #include <type/mac.pat>
 
-//some pcapng are very large -> increase this limit //@TODO link to enviroment variable
+//some pcapng are very large -> increase this limit when needed
 #pragma pattern_limit 512000
 
 //global variables
@@ -50,8 +50,8 @@ enum block_type : u32 {
     CUSTOM_BLOCK_CAN_NOT_COPY = 0x40000BAD, // Custom Block that rewriters should not copy into new files (Section 4.8)
     SECTION_HEADER          = 0x0A0D0D0A,
     RESERVED                = 0x0A0D0A00 ... 0x0A0D0AFF, //	Reserved. Used to detect trace files corrupted because of file transfers using the HTTP protocol in text mode.
-    RESERVED                = 0x000A0D0A ... 0xFF0A0D0A, //	Reserved. Used to detect trace files corrupted because of file transfers using the HTTP protocol in text mode.
-    RESERVED                = 0x000A0D0D ... 0xFF0A0D0D, //	Reserved. Used to detect trace files corrupted because of file transfers using the HTTP protocol in text mode.
+    //RESERVED                = 0x??0A0D0A //	Reserved. Used to detect trace files corrupted because of file transfers using the HTTP protocol in text mode.
+    //RESERVED                = 0x??0A0D0D, //	Reserved. Used to detect trace files corrupted because of file transfers using the HTTP protocol in text mode.
     RESERVED                = 0x0D0D0A00 ... 0x0D0D0AFF, // Reserved. Used to detect trace files corrupted because of file transfers using the FTP protocol in text mode.
     RESERVED                = 0x80000000 ... 0xFFFFFFFF, // Reserved for local use.
 };
@@ -102,6 +102,7 @@ enum epb_option_type : u16 {
     EPB_PACKETID   = 5,
     EPB_QUEUE      = 6,
     EPB_VERDICT    = 7,
+    EPB_PROCESSID_THREADID = 8,
     //opt_custom	2988/2989/19372/19373
 };
 
