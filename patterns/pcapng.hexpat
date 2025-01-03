@@ -869,7 +869,7 @@ enum link_type : u16 {
 struct if_option {
     if_option_type type;
     u16 len;
-    match(type) {
+    match (type) {
         (if_option_type::IF_NAME):
             char if_name[len];
         (if_option_type::IF_DESCRIPTION):
@@ -918,7 +918,7 @@ struct if_option {
 struct isb_option {
     isb_option_type type;
     u16 len;
-    match(type) {
+    match (type) {
         (isb_option_type::ISB_STARTTIME):
             u64 start_time;
         (isb_option_type::ISB_ENDTIME):
@@ -946,22 +946,19 @@ struct isb_option {
 struct nrb_record {
     nrb_record_type type;
     u16 len;
-    if (type == nrb_record_type::NRB_IPv4_RECORD) {
-        char data[len];
-    }
-    else if (type == nrb_record_type::NRB_IPv6_RECORD) {
-        char data[len];
-    }
-    else if (type == nrb_record_type::NRB_EUI48) {
-        type::MACAddress eui48;
-    }
-    else if (type == nrb_record_type::NRB_EUI64) {
-        u64 eui;
-    }
-    else if (type == nrb_record_type::NRB_END_OF_RECORD) {
-        //end of option
-    } else {
-        UNKNOWN_OPTION
+    match (type) {
+        (nrb_record_type::NRB_IPv4_RECORD):
+            char data[len];
+        (nrb_record_type::NRB_IPv6_RECORD):
+            char data[len];
+        (nrb_record_type::NRB_EUI48):
+            type::MACAddress eui48;
+        (nrb_record_type::NRB_EUI64):
+            u64 eui;
+        (nrb_record_type::NRB_END_OF_RECORD):
+            {} //end of option
+        (_):
+            { UNKNOWN_OPTION }
     }
     std::mem::AlignTo<4>;
 };
