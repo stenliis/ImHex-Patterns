@@ -635,7 +635,7 @@ enum isb_option_type : u16 {
     ISB_FILTERACCEPT = 6,
     ISB_OSDROP       = 7,
     ISB_USRDELIV     = 8,
-     //opt_custom	2988/2989/19372/19373
+    //opt_custom	2988/2989/19372/19373
 };
 
 enum nrb_record_type : u16 {
@@ -869,65 +869,47 @@ enum link_type : u16 {
 struct if_option {
     if_option_type type;
     u16 len;
-    if (type == if_option_type::IF_NAME) {
-        char if_name[len];
-    }
-    else if (type == if_option_type::IF_DESCRIPTION) {
-        char if_description[len];
-    }
-    else if (type == if_option_type::IF_IPv4ADDR) {
-        type::IPv4Address addr;;
-    }
-    else if (type == if_option_type::IF_IPv6ADDR) {
-        type::IPv6Address addr;
-    }
-    else if (type == if_option_type::IF_MAC_ADDR) {
-        type::MACAddress  addr;
-    }
-    else if (type == if_option_type::IF_EUI_ADDR) {
-        type::IPv6Address eui;
-    }
-    else if (type == if_option_type::IF_SPEED) {
-        u64 speed;
-    }
-    else if (type == if_option_type::IF_TSRESOL) {
-        u8 tsresol;
-    }
-    else if (type == if_option_type::IF_TZONE) {
-        u32 zone;
-    }
-    else if (type == if_option_type::IF_FILTER) {
-        char filter[len];
-    }
-    else if (type == if_option_type::IF_OS) {
-        char os_nam[len];
-    }
-    else if (type == if_option_type::IF_FCSLEN) {
-        u8 fcslen;
-    }
-    else if (type == if_option_type::IF_TSOFFSET) {
-        u64 rsoffset;
-    }
-    else if (type == if_option_type::IF_HARDWARE) {
-        char if_hardware[len];
-    }
-    else if (type == if_option_type::IF_TXSPEED) {
-        u64 txspeed;
-    }
-    else if (type == if_option_type::IF_RXSPEED) {
-        u64 rxspeed;
-    }
-    else if (type == if_option_type::IF_IANA_TZNAME) {
-        char tzname[len];
-    }
-    else if (type == if_option_type::COMMENT) {
-        char comment[len]; 
-    }
-    else if (type == if_option_type::ENDOFOPT) {
-        //end of options
-    }
-    else {
-        UNKNOWN_OPTION
+    match(type) {
+        (if_option_type::IF_NAME):
+            char if_name[len];
+        (if_option_type::IF_DESCRIPTION):
+            char if_description[len];
+        (if_option_type::IF_IPv4ADDR):
+            type::IPv4Address addr;
+        (if_option_type::IF_IPv6ADDR):
+            type::IPv6Address addr;
+        (if_option_type::IF_MAC_ADDR):
+            type::MACAddress  addr;
+        (if_option_type::IF_EUI_ADDR):
+            type::IPv6Address eui;
+        (if_option_type::IF_SPEED):
+            u64 speed;
+        (if_option_type::IF_TSRESOL):
+            u8 tsresol;
+        (if_option_type::IF_TZONE):
+            u32 zone;
+        (if_option_type::IF_FILTER):
+            char filter[len];
+        (if_option_type::IF_OS):
+            char os_nam[len];
+        (if_option_type::IF_FCSLEN):
+            u8 fcslen;
+        (if_option_type::IF_TSOFFSET):
+            u64 rsoffset;
+        (if_option_type::IF_HARDWARE):
+            char if_hardware[len];
+        (if_option_type::IF_TXSPEED):
+            u64 txspeed;
+        (if_option_type::IF_RXSPEED):
+            u64 rxspeed;
+        (if_option_type::IF_IANA_TZNAME):
+            char tzname[len];
+        (if_option_type::COMMENT):
+            char comment[len];
+        (if_option_type::ENDOFOPT):
+            {} //end of options
+        (_):
+            { UNKNOWN_OPTION }
     }
     std::mem::AlignTo<4>;
 };
