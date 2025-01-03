@@ -907,7 +907,7 @@ struct if_option {
         (if_option_type::COMMENT):
             char comment[len];
         (if_option_type::ENDOFOPT):
-            {} //end of options
+            break;
         (_):
             { UNKNOWN_OPTION }
     }
@@ -936,7 +936,7 @@ struct isb_option {
         (isb_option_type::COMMENT):
             char comment[len];
         (isb_option_type::ENDOFOPT):
-            {} //end of options
+            break;
         (_):
             { UNKNOWN_OPTION }
     }
@@ -956,7 +956,7 @@ struct nrb_record {
         (nrb_record_type::NRB_EUI64):
             u64 eui;
         (nrb_record_type::NRB_END_OF_RECORD):
-            {} //end of option
+            break;
         (_):
             { UNKNOWN_OPTION }
     }
@@ -976,7 +976,7 @@ struct ns_option {
         (ns_option_type::COMMENT):
             char comment[len];
         (ns_option_type::ENDOFOPT):
-            {} //end of options
+            break;
         (_):
             { UNKNOWN_OPTION }
     }
@@ -996,7 +996,7 @@ struct shb_option {
         (shb_option_type::COMMENT):
             char comment[len];
         (shb_option_type::ENDOFOPT):
-            {} //end of options
+            break;
         (_):
             { UNKNOWN_OPTION }
     }
@@ -1044,7 +1044,7 @@ struct epb_option {
         (epb_option_type::COMMENT):
             char comment[len];
         (epb_option_type::ENDOFOPT):
-            {} //end of options
+            break;
         (_):
             { UNKNOWN_OPTION }
     }
@@ -1061,20 +1061,6 @@ struct epb_option {
 union EndianConverter {
     u32 raw;
     endians end;
-};
-
-fn is_last_option() {
-    //every options type variant have same end mark (type == 0 and len == 0)
-    
-    u16 type = std::mem::read_unsigned($, 2);
-    if (type != 0) {
-        return false;
-    }
-    u16 len = std::mem::read_unsigned($ + 2, 2);
-    if (len != 0) {
-        std::warning("Invalid end option len");
-    }
-    return true;
 };
 
 fn check_endian(block_type type) {
@@ -1101,8 +1087,7 @@ fn check_endian(block_type type) {
 };
 
 struct TLV<T> {
-    T record[while(!is_last_option())];
-    T record_end;
+    T options[while(true)];
 } [[inline]];
 
 fn calc_len_with_padding(u32 len) {
