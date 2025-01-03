@@ -1117,60 +1117,60 @@ struct base_block {
     check_endian(type);
     u32 total_len_a;
     
-    if (type == block_type::SECTION_HEADER) {
-        endians byte_order;
-        u16 major_version;
-        u16 mirror_version;
-        u64 section_len;
-        if (total_len_a > SECTION_HEADER_LEN_WITHOUT_OPTIONS) {
-            TLV<shb_option>;
+    match(type) {
+        (block_type::SECTION_HEADER): {
+            endians byte_order;
+            u16 major_version;
+            u16 mirror_version;
+            u64 section_len;
+            if (total_len_a > SECTION_HEADER_LEN_WITHOUT_OPTIONS) {
+                TLV<shb_option>;
+            }
         }
-    }
-    else if (type == block_type::INTERFACE_DESCRIPTION) {
-        link_type link_type;
-        u16 reserved;
-        u32 snap_len;
-        if (total_len_a > INTERFACE_DESCRIPTION_LEN_WITHOUT_OPTIONS) {
-            TLV<if_option>;
+        (block_type::INTERFACE_DESCRIPTION): {
+            link_type link_type;
+            u16 reserved;
+            u32 snap_len;
+            if (total_len_a > INTERFACE_DESCRIPTION_LEN_WITHOUT_OPTIONS) {
+                TLV<if_option>;
+            }
         }
-    }
-    else if (type == block_type::NAME_RESOLUTION) {
-        TLV<nrb_record> nrb;
-        if (total_len_a > (NAME_RESOLUTION_LEN_WITHOUT_RECORDS_AND_OPTIONS + sizeof(nrb))) {
-            TLV<ns_option>;
+        (block_type::NAME_RESOLUTION): {
+            TLV<nrb_record> nrb;
+            if (total_len_a > (NAME_RESOLUTION_LEN_WITHOUT_RECORDS_AND_OPTIONS + sizeof(nrb))) {
+                TLV<ns_option>;
+            }
         }
-    }
-    else if (type == block_type::ENHANCED_PACKET) {
-        u32 interface_id;
-        u64 timestamp;
-        u32 captured_packet_len;
-        u32 original_packet_len;
-        u8 packet_data[captured_packet_len];
-        std::mem::AlignTo<4>;
-        if (total_len_a > (ENHANCED_PACKET_LEN_WITHOUT_DATA_AND_OPTIONS + calc_len_with_padding(captured_packet_len))) {
-            TLV<epb_option>;
+        (block_type::ENHANCED_PACKET): {
+            u32 interface_id;
+            u64 timestamp;
+            u32 captured_packet_len;
+            u32 original_packet_len;
+            u8 packet_data[captured_packet_len];
+            std::mem::AlignTo<4>;
+            if (total_len_a > (ENHANCED_PACKET_LEN_WITHOUT_DATA_AND_OPTIONS + calc_len_with_padding(captured_packet_len))) {
+                TLV<epb_option>;
+            }
         }
-    }
-    else if (type == block_type::SIMPLE_PACKET) {
-        u32 len;
-        u8 data[total_len_a - 16];
-        std::mem::AlignTo<4>;
-    }
-    else if (type == block_type::INTERFACE_STATISTICS) {
-        u32 interface_id;
-        u64 timestamp;
-        if (total_len_a > INTERFACE_STATISTICS_LEN_WITHOUT_OPTIONS) {
-            TLV<isb_option>;
+        (block_type::SIMPLE_PACKET): {
+            u32 len;
+            u8 data[total_len_a - 16];
+            std::mem::AlignTo<4>;
         }
-    }
-    else if (type == block_type::CUSTOM_BLOCK_CAN_COPY || type == block_type::CUSTOM_BLOCK_CAN_NOT_COPY) {
-        u32 pen;
-        u8 data[total_len_a - 16];
-        std::mem::AlignTo<4>;
-    }
-
-    else {
-        UNKNOWN_BLOCK
+        (block_type::INTERFACE_STATISTICS): {
+            u32 interface_id;
+            u64 timestamp;
+            if (total_len_a > INTERFACE_STATISTICS_LEN_WITHOUT_OPTIONS) {
+                TLV<isb_option>;
+            }
+        }
+        (block_type::CUSTOM_BLOCK_CAN_COPY | block_type::CUSTOM_BLOCK_CAN_NOT_COPY): {
+            u32 pen;
+            u8 data[total_len_a - 16];
+            std::mem::AlignTo<4>;
+        }
+        (_):
+            { UNKNOWN_BLOCK }
     }
 
     u32 total_len_b;
