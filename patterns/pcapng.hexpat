@@ -1087,20 +1087,17 @@ fn check_endian(block_type type) {
     conv.raw = std::mem::read_unsigned($ + 4, 4);
     endians byte_order = conv.end;
 
-    if (byte_order == endians::LE) {
-        std::core::set_endian(std::mem::Endian::Little);
-    }
-    else if (byte_order == endians::BE)
-    {
-        std::core::set_endian(std::mem::Endian::Big);
-    }
-    else
-    {
-        std::warning("Invalid endians type value");
-        ABORT_PARSING
+    match (byte_order) {
+        (endians::LE):
+            std::core::set_endian(std::mem::Endian::Little);
+        (endians::BE):
+            std::core::set_endian(std::mem::Endian::Big);
+        (_): {
+            std::warning("Invalid endians type value");
+            ABORT_PARSING
+        }
     }
     current_endian = std::core::get_endian();
-    
 };
 
 struct TLV<T> {
