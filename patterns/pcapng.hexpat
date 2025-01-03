@@ -918,35 +918,27 @@ struct if_option {
 struct isb_option {
     isb_option_type type;
     u16 len;
-    if (type == isb_option_type::ISB_STARTTIME) {
-        u64 start_time;
-    }
-    else if (type == isb_option_type::ISB_ENDTIME) {
-        u64 end_time;
-    }
-    else if (type == isb_option_type::ISB_IFRECV) {
-        u64 ifrecv;
-    }
-    else if (type == isb_option_type::ISB_IFDROP) {
-        u64 ifdrop;
-    }
-    else if (type == isb_option_type::ISB_FILTERACCEPT) {
-        u64 filteraccept;
-    }
-    else if (type == isb_option_type::ISB_OSDROP) {
-        u64 osdrop;
-    }
-    else if (type == isb_option_type::ISB_USRDELIV) {
-        u64 usrdeliv;
-    }
-    else if (type == isb_option_type::COMMENT) {
-        char comment[len];
-    }
-    else if (type == isb_option_type::ENDOFOPT) {
-        //end of options
-    }
-    else {
-        UNKNOWN_OPTION
+    match(type) {
+        (isb_option_type::ISB_STARTTIME):
+            u64 start_time;
+        (isb_option_type::ISB_ENDTIME):
+            u64 end_time;
+        (isb_option_type::ISB_IFRECV):
+            u64 ifrecv;
+        (isb_option_type::ISB_IFDROP):
+            u64 ifdrop;
+        (isb_option_type::ISB_FILTERACCEPT):
+            u64 filteraccept;
+        (isb_option_type::ISB_OSDROP):
+            u64 osdrop;
+        (isb_option_type::ISB_USRDELIV):
+            u64 usrdeliv;
+        (isb_option_type::COMMENT):
+            char comment[len];
+        (isb_option_type::ENDOFOPT):
+            {} //end of options
+        (_):
+            { UNKNOWN_OPTION }
     }
     std::mem::AlignTo<4>;
 };   
