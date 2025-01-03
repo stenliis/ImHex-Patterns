@@ -966,22 +966,19 @@ struct nrb_record {
 struct ns_option {
     ns_option_type type;
     u16 len;
-    if (type == ns_option_type::NS_DNSNAME) {
-        char dns_name[len];
-    }
-    else if (type == ns_option_type::NS_DNS_IPv4_ADDR) {
-        type::IPv4Address addr;
-    }
-    else if (type == ns_option_type::NS_DNS_IPv6_ADDR) {
-        type::IPv6Address addr;
-    }
-    else if (type == ns_option_type::COMMENT) {
-        char comment[len];
-    }
-    else if (type == ns_option_type::ENDOFOPT) {
-        //end of options
-    } else {
-        UNKNOWN_OPTION
+    match (type) {
+        (ns_option_type::NS_DNSNAME):
+            char dns_name[len];
+        (ns_option_type::NS_DNS_IPv4_ADDR):
+            type::IPv4Address addr;
+        (ns_option_type::NS_DNS_IPv6_ADDR):
+            type::IPv6Address addr;
+        (ns_option_type::COMMENT):
+            char comment[len];
+        (ns_option_type::ENDOFOPT):
+            {} //end of options
+        (_):
+            { UNKNOWN_OPTION }
     }
     std::mem::AlignTo<4>;    
 };
