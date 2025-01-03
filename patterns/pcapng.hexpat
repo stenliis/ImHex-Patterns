@@ -646,15 +646,6 @@ enum nrb_record_type : u16 {
     NRB_EUI64         = 4,
 };
 
-enum ns_opton_type : u16 {
-    ENDOFOPT	     = 0,
-    COMMENT          = 1,
-    NS_DNSNAME       = 2,
-    NS_DNS_IPv4_ADDR = 3,
-    NS_DNS_IPv6_ADDR = 4,
-    //opt_custom	2988/2989/19372/19373
-};
-
 enum link_type : u16 {
     LINKTYPE_NULL               = 0, //	BSD loopback encapsulation
     LINKTYPE_ETHERNET           = 1, //	IEEE 802.3 Ethernet
