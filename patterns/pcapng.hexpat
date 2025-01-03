@@ -1028,32 +1028,25 @@ bitfield epb_flags {
 struct epb_option {
     epb_option_type type;
     u16 len;
-    if (type == epb_option_type::EPB_FLAGS) {
-        epb_flags flags;
-    }
-    else if (type == epb_option_type::EPB_HASH) {
-        u8 hash[len];
-    }
-    else if (type == epb_option_type::EPB_DROPCOUNT) {
-        u64 dropcount;
-    }
-    else if (type == epb_option_type::EPB_PACKETID) {
-        u64 packetid;
-    }
-    else if (type == epb_option_type::EPB_QUEUE) {
-        u32 queue;
-    }
-    else if (type == epb_option_type::EPB_VERDICT) {
-        u8 verdict[len];
-    }
-    else if (type == epb_option_type::COMMENT) {
-        char comment[len];
-    }
-    else if (type == epb_option_type::ENDOFOPT) {
-        //end of options
-    }
-    else {
-        UNKNOWN_OPTION
+    match (type) {
+        (epb_option_type::EPB_FLAGS):
+            epb_flags flags;
+        (epb_option_type::EPB_HASH):
+            u8 hash[len];
+        (epb_option_type::EPB_DROPCOUNT):
+            u64 dropcount;
+        (epb_option_type::EPB_PACKETID):
+            u64 packetid;
+        (epb_option_type::EPB_QUEUE):
+            u32 queue;
+        (epb_option_type::EPB_VERDICT):
+            u8 verdict[len];
+        (epb_option_type::COMMENT):
+            char comment[len];
+        (epb_option_type::ENDOFOPT):
+            {} //end of options
+        (_):
+            { UNKNOWN_OPTION }
     }
     std::mem::AlignTo<4>;
 };
