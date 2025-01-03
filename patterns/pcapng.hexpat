@@ -986,23 +986,19 @@ struct ns_option {
 struct shb_option {
     shb_option_type type;
     u16 len;
-    if (type == shb_option_type::SHB_HARDWARE) {
-        char hardware[len];
-    }
-    else if (type == shb_option_type::SHB_OS) {
-        char os_name[len];
-    }
-    else if (type == shb_option_type::SHB_USERAPPL) {
-        char app_name[len];
-    }
-    else if (type == shb_option_type::COMMENT) {
-        char comment[len];
-    }
-    else if (type == shb_option_type::ENDOFOPT) {
-        //end of options
-    }
-    else {
-        UNKNOWN_OPTION
+    match (type) {
+        (shb_option_type::SHB_HARDWARE):
+            char hardware[len];
+        (shb_option_type::SHB_OS):
+            char os_name[len];
+        (shb_option_type::SHB_USERAPPL):
+            char app_name[len];
+        (shb_option_type::COMMENT):
+            char comment[len];
+        (shb_option_type::ENDOFOPT):
+            {} //end of options
+        (_):
+            { UNKNOWN_OPTION }
     }
     std::mem::AlignTo<4>;
 };
