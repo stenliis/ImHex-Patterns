@@ -857,6 +857,15 @@ enum link_type : u16 {
     LINKTYPE_PRIVATE_USE        = 65000 ... 65535, // private use link types.
 };
 
+enum secret_type : u32 {
+    SECRETS_TYPE_TLS            = 0x544C534B, /* TLS Key Log */
+    SECRETS_TYPE_SSH            = 0x5353484B, /* SSH Key Log */
+    SECRETS_TYPE_WIREGUARD      = 0x57474B4C, /* WireGuard Key Log */
+    SECRETS_TYPE_ZIGBEE_NWK_KEY = 0x5A4E574B, /* Zigbee NWK Key */
+    SECRETS_TYPE_ZIGBEE_APS_KEY = 0x5A415053, /* Zigbee APS Key */
+    SECRETS_TYPE_OPCUA          = 0x55414B4C, /* OPC UA Key Log */
+};
+
 struct if_option {
     if_option_type type;
     u16 len;
@@ -1100,7 +1109,7 @@ fn calc_len_with_padding(u32 len) {
     u8 pad_len = (4 - len %4) % 4;
     return len + pad_len;
 };
-                                                                                        
+
 struct base_block {
     std::core::set_endian(current_endian);
     
@@ -1154,6 +1163,15 @@ struct base_block {
             if (total_len_a > INTERFACE_STATISTICS_LEN_WITHOUT_OPTIONS) {
                 TLV<isb_option>;
             }
+        }
+        (block_type::DECRYPTION_SECRETS) : {
+            secret_type type;
+            u32 len;
+            //u8 data[total_len_a - 16]; //TODO
+            //std::mem::AlignTo<4>;
+            //if (total_len_a > (ENHANCED_PACKET_LEN_WITHOUT_DATA_AND_OPTIONS + calc_len_with_padding(captured_packet_len))) {
+            //    TLV<isb_option>;
+            //}
         }
         (block_type::CUSTOM_BLOCK_CAN_COPY | block_type::CUSTOM_BLOCK_CAN_NOT_COPY): {
             u32 pen;
