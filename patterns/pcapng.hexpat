@@ -916,7 +916,6 @@ struct if_option {
 
 struct if_options {
     if_option options[while(true)];
-    //@TODO check restriction
 } [[inline]];
 
 struct isb_option {
@@ -949,7 +948,6 @@ struct isb_option {
 
 struct isb_options {
     isb_option options[while(true)];
-    //@TODO check restriction
 } [[inline]];
 
 struct nrb_record {
@@ -974,7 +972,6 @@ struct nrb_record {
 
 struct nrb_records {
     nrb_record records[while(true)];
-    //@TODO check restriction
 } [[inline]];
 
 struct ns_option {
@@ -999,7 +996,6 @@ struct ns_option {
 
 struct ns_options {
     ns_option options[while(true)];
-    //@TODO check restriction
 } [[inline]];
 
 struct shb_option {
@@ -1024,7 +1020,6 @@ struct shb_option {
 
 struct shb_options {
     shb_option options[while(true)];
-    //@TODO check restriction
 } [[inline]];
 
 enum epb_flag_direction : u8 {
@@ -1077,7 +1072,6 @@ struct epb_option {
 
 struct epb_options {
     epb_option options[while(true)];
-    //@TODO check restriction
 } [[inline]];
 
 #define SECTION_HEADER_LEN_WITHOUT_OPTIONS 28
