@@ -914,6 +914,10 @@ struct if_option {
     std::mem::AlignTo<4>;
 };
 
+struct if_options {
+    if_option options[while(true)];
+    //@TODO check restriction
+} [[inline]];
 
 struct isb_option {
     isb_option_type type;
@@ -943,6 +947,11 @@ struct isb_option {
     std::mem::AlignTo<4>;
 };   
 
+struct isb_options {
+    isb_option options[while(true)];
+    //@TODO check restriction
+} [[inline]];
+
 struct nrb_record {
     nrb_record_type type;
     u16 len;
@@ -962,6 +971,11 @@ struct nrb_record {
     }
     std::mem::AlignTo<4>;
 };
+
+struct nrb_records {
+    nrb_record records[while(true)];
+    //@TODO check restriction
+} [[inline]];
 
 struct ns_option {
     ns_option_type type;
@@ -983,6 +997,11 @@ struct ns_option {
     std::mem::AlignTo<4>;    
 };
 
+struct ns_options {
+    ns_option options[while(true)];
+    //@TODO check restriction
+} [[inline]];
+
 struct shb_option {
     shb_option_type type;
     u16 len;
@@ -1002,6 +1021,11 @@ struct shb_option {
     }
     std::mem::AlignTo<4>;
 };
+
+struct shb_options {
+    shb_option options[while(true)];
+    //@TODO check restriction
+} [[inline]];
 
 enum epb_flag_direction : u8 {
     UNKNOWN  = 0,
@@ -1051,6 +1075,10 @@ struct epb_option {
     std::mem::AlignTo<4>;
 };
 
+struct epb_options {
+    epb_option options[while(true)];
+    //@TODO check restriction
+} [[inline]];
 
 #define SECTION_HEADER_LEN_WITHOUT_OPTIONS 28
 #define INTERFACE_DESCRIPTION_LEN_WITHOUT_OPTIONS 20
@@ -1086,10 +1114,6 @@ fn check_endian(block_type type) {
     current_endian = std::core::get_endian();
 };
 
-struct TLV<T> {
-    T options[while(true)];
-} [[inline]];
-
 fn calc_len_with_padding(u32 len) {
     u8 pad_len = (4 - len %4) % 4;
     return len + pad_len;
@@ -1109,7 +1133,7 @@ struct base_block {
             u16 mirror_version;
             u64 section_len;
             if (total_len_a > SECTION_HEADER_LEN_WITHOUT_OPTIONS) {
-                TLV<shb_option>;
+                shb_options options;
             }
         }
         (block_type::INTERFACE_DESCRIPTION): {
@@ -1117,13 +1141,13 @@ struct base_block {
             u16 reserved;
             u32 snap_len;
             if (total_len_a > INTERFACE_DESCRIPTION_LEN_WITHOUT_OPTIONS) {
-                TLV<if_option>;
+                if_options options;
             }
         }
         (block_type::NAME_RESOLUTION): {
-            TLV<nrb_record> nrb;
+            nrb_records nrb;
             if (total_len_a > (NAME_RESOLUTION_LEN_WITHOUT_RECORDS_AND_OPTIONS + sizeof(nrb))) {
-                TLV<ns_option>;
+                ns_options options;
             }
         }
         (block_type::ENHANCED_PACKET): {
@@ -1134,7 +1158,7 @@ struct base_block {
             u8 packet_data[captured_packet_len];
             std::mem::AlignTo<4>;
             if (total_len_a > (ENHANCED_PACKET_LEN_WITHOUT_DATA_AND_OPTIONS + calc_len_with_padding(captured_packet_len))) {
-                TLV<epb_option>;
+                epb_options options;
             }
         }
         (block_type::SIMPLE_PACKET): {
@@ -1146,7 +1170,7 @@ struct base_block {
             u32 interface_id;
             u64 timestamp;
             if (total_len_a > INTERFACE_STATISTICS_LEN_WITHOUT_OPTIONS) {
-                TLV<isb_option>;
+                isb_options options;
             }
         }
         (block_type::DECRYPTION_SECRETS) : {
@@ -1155,7 +1179,7 @@ struct base_block {
             //u8 data[total_len_a - 16]; //TODO
             //std::mem::AlignTo<4>;
             //if (total_len_a > (ENHANCED_PACKET_LEN_WITHOUT_DATA_AND_OPTIONS + calc_len_with_padding(captured_packet_len))) {
-            //    TLV<isb_option>;
+            //    isb_options options;
             //}
         }
         (block_type::CUSTOM_BLOCK_CAN_COPY | block_type::CUSTOM_BLOCK_CAN_NOT_COPY): {
